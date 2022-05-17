@@ -19,7 +19,8 @@ import {
 
 // Telas:
 // import { Home } from './src/screens/Home';
-import { CarDetails } from './src/screens/CarDetails';
+// import { CarDetails } from './src/screens/CarDetails';
+import { Schedulling } from './src/screens/Schedulling';
 
 
 import theme from './src/styles/theme';
@@ -41,7 +42,8 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       {/* <Home /> */}
-      <CarDetails />
+      {/* <CarDetails /> */}
+      <Schedulling />
     </ThemeProvider>
   )
 }
