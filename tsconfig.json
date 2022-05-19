@@ -1,6 +1,13 @@
 {
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+
+    // Solução para erro do today em react-native-calendars
+    // https://github.com/wix/react-native-calendars/issues/1652
+    "baseUrl": "./",
+    "paths": {
+      "react-native-calendars": ["node_modules/@types/react-native-calendars"]
+    }, 
   },
   "extends": "expo/tsconfig.base"
 }
