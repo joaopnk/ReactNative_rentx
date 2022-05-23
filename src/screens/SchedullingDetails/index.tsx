@@ -2,6 +2,8 @@ import React from 'react';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from 'styled-components';
 import { RFValue } from 'react-native-responsive-fontsize';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+
 
 
 // Componentes
@@ -52,6 +54,13 @@ import {
 export function SchedullingDetails(){
 
   const theme = useTheme();
+
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+
+  
+  function handleConfirmRental() {
+    navigation.navigate('SchedullingComplete');
+  }
 
   return (
     <Container>
@@ -125,8 +134,9 @@ export function SchedullingDetails(){
 
       <Footer>
         <Button 
-          title="Confirmar" 
-        
+          title="Alugar agora"
+          color={theme.colors.success}
+          onPress={handleConfirmRental}
         />
       </Footer>
 

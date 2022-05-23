@@ -8,11 +8,15 @@ import {
 
 interface Props extends RectButtonProps {
   title: string;
+  onPress: () => void;
 }
 
-export function ConfirmButton({title, ...rest}: Props){
+export function ConfirmButton({
+  title,
+  onPress,
+}: Props){
   return (
-    <Container>
+    <Container onPress={onPress}>
         <Title>{title}</Title>
     </Container>
   );

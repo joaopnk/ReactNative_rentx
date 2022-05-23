@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { useTheme } from 'styled-components';
 
 import { BackButton } from '../../components/BackButton';
@@ -27,6 +28,14 @@ import { StatusBar } from 'react-native';
 export function Schedulling(){
   const theme = useTheme();
 
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+
+  
+  function handleConfirmRental() {
+    navigation.navigate('SchedullingDetails');
+  }
+
+
   return (
     <Container>
         <Header>
@@ -50,7 +59,7 @@ export function Schedulling(){
                     <DateTitle>DE</DateTitle>
                     {/* <DateValue selected={false}></DateValue> */}
                     <DateValueContainer selected={false}>
-                        <DateValue></DateValue>
+                        <DateValue>18/06/2021</DateValue>
                     </DateValueContainer>
                 </DateInfo>
                 <ArrowSvg />
@@ -58,7 +67,7 @@ export function Schedulling(){
                     <DateTitle>ATÉ</DateTitle>
                     {/* <DateValueContainer selected={!!rentalPeriod.endFormatted}> */}
                     <DateValueContainer selected={false}>
-                        <DateValue></DateValue>
+                        <DateValue>18/06/2021</DateValue>
                     </DateValueContainer>
                 </DateInfo>
             </RentalPeriod>
@@ -69,7 +78,7 @@ export function Schedulling(){
         </Content>
             <Footer>
                 <Button 
-                    title="Confirmar"
+                    title="Confirmar" onPress={handleConfirmRental}
                 />
             </Footer>
     </Container>
