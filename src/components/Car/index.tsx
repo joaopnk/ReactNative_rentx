@@ -51,4 +51,4 @@ export function Car({ data, ...rest }: Props){
         />
     </Container>
   );
-}
+}   
