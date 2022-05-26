@@ -76,7 +76,8 @@ function Calendar({ markedDates, onDayPress }: CalendarProps){
 
         // Para iniciar de segunda a domingo
         firstDay={1}
-        minDate={new Date()}
+        // minDate={new Date()} -- VERSÃO ANTERIOR, ADICIONEI O TOLOCALE PARA RETIRAR O WARNIGN QUE APARECIA.
+        minDate={new Date().toLocaleDateString('en-US')}
         markingType="period"
         markedDates={markedDates}
         onDayPress={onDayPress}        
