@@ -44,7 +44,7 @@ interface RentalPeriod {
 // Tipando parametros que vem de uma tela para outra
 interface Params {
     car: CarDTO;
-  }
+}
 
 export function Schedulling(){
   const [lastSelectedDate, setLastSelectedDate] = useState<DayProps>({} as DayProps);
@@ -53,7 +53,7 @@ export function Schedulling(){
   const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>({} as RentalPeriod)
 
   const theme = useTheme();
-
+  
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   // #Recuperando os parametros que estão sendo passados para essa tela
   const route       = useRoute();

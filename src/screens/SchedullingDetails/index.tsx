@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { format } from 'date-fns';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from 'styled-components';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, useNavigation, useRoute } from '@react-navigation/native';
 
 
 
@@ -13,13 +14,13 @@ import { Accessory }    from '../../components/Accessory';
 import { Button }       from '../../components/Button';
 
 
+import { CarDTO } from '../../dtos/CarDTO';
+
+
 // SVGS
-import speedSvg from '../../assets/speed.svg';
-import accelerationSvg from '../../assets/acceleration.svg';
-import forceSvg from '../../assets/force.svg';
-import gasolineSvg from '../../assets/gasoline.svg';
-import exchangeSvg from '../../assets/exchange.svg';
-import peopleSvg from '../../assets/people.svg';
+import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
+
+import { getPlatformDate } from '../../utils/getPlatformDate';
 
 
 import {
@@ -34,7 +35,7 @@ import {
   Period,
   Rent,
   Price,
-  Acessories,
+  Accessories,
   Footer,
   RentalPeriod,
   CalendarIcon,
@@ -49,13 +50,26 @@ import {
   RentalPriceTotal,
 } from './styles';
 
+// Tipando parametros que vem de uma tela para outra
+interface Params {
+  car: CarDTO;
+  dates: string[];
+}
 
+interface RentalPeriod{
+  start: string;
+  end: string;
+}
 
 export function SchedullingDetails(){
+
+  const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>({} as  RentalPeriod) 
 
   const theme = useTheme();
 
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const route       = useRoute();
+  const { car, dates } = route.params as Params;
 
   
   function handleConfirmRental() {
@@ -66,6 +80,14 @@ export function SchedullingDetails(){
     navigation.goBack();
   }
 
+
+  useEffect(() => {
+    setRentalPeriod({
+      start: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+      end: format(getPlatformDate(new Date(dates[dates.length -1])), 'dd/MM/yyyy'),
+    })
+  }, [])
+
   return (
     <Container>
       <Header>
@@ -74,30 +96,34 @@ export function SchedullingDetails(){
 
       <CarImages>
         <ImageSlider 
-          imagesUrl={['https://png.monster/wp-content/uploads/2020/11/2018-audi-rs5-4wd-coupe-angular-front-5039562b.png']} 
+          imagesUrl={car.photos} 
         />
       </CarImages>
 
       <Content>
         <Details>
           <Description>
-            <Brand>Lamborghini</Brand>
-            <Name>Huracan</Name>
+            <Brand>{car.brand}</Brand>
+            <Name>{car.name}</Name>
           </Description>
           <Rent>
-            <Period>Ao dia</Period>
-            <Price>R$ 580</Price>
+            <Period>{car.rent.period}</Period>
+            <Price>R$ {car.rent.price}</Price>
           </Rent>
         </Details>
 
-         <Acessories>
-            <Accessory name="380Km/h" icon={speedSvg}/>
-            <Accessory name="3.2s" icon={accelerationSvg}/>
-            <Accessory name="800 HP" icon={forceSvg}/>
-            <Accessory name="Gasolina" icon={gasolineSvg}/>
-            <Accessory name="Auto" icon={exchangeSvg}/>
-            <Accessory name="2 pessoas" icon={peopleSvg}/>
-         </Acessories>
+         <Accessories>
+           {
+             car.accessories.map(accessory => (
+               <Accessory 
+                  key={accessory.type}
+                  name={accessory.name}
+                  icon={getAccessoryIcon(accessory.type)}
+                />
+
+              ))
+           }
+         </Accessories>
 
 
         <RentalPeriod>
@@ -111,7 +137,7 @@ export function SchedullingDetails(){
           
           <DateInfo>
             <DateTitle>DE</DateTitle>
-            <DateValue>18/06/2021</DateValue>
+            <DateValue>{rentalPeriod.start}</DateValue>
           </DateInfo>
 
           <Feather 
@@ -121,8 +147,8 @@ export function SchedullingDetails(){
           />
 
           <DateInfo>
-            <DateTitle>DE</DateTitle>
-            <DateValue>20/06/2021</DateValue>
+            <DateTitle>ATÉ</DateTitle>
+            <DateValue>{rentalPeriod.end}</DateValue>
           </DateInfo>
 
         </RentalPeriod>
