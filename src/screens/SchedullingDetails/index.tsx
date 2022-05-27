@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { format } from 'date-fns';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from 'styled-components';
@@ -15,7 +16,7 @@ import { Button }       from '../../components/Button';
 
 
 import { CarDTO } from '../../dtos/CarDTO';
-
+import { api }    from '../../services/api';
 
 // SVGS
 import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
@@ -63,6 +64,7 @@ interface RentalPeriod{
 
 export function SchedullingDetails(){
 
+
   const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>({} as  RentalPeriod) 
 
   const theme = useTheme();
@@ -71,9 +73,27 @@ export function SchedullingDetails(){
   const route       = useRoute();
   const { car, dates } = route.params as Params;
 
+  const rentTotal = Number(dates.length * car.rent.price);
+
   
-  function handleConfirmRental() {
-    navigation.navigate('SchedullingComplete');
+  async function handleConfirmRental() {
+    // Agendamentos de um carro especifico
+    const schedulesByCar = await api.get(`/schedules_bycars/${car.id}`);
+
+    // Novas datas + datas já existentes
+    const unavailable_dates = [
+      ...schedulesByCar.data.unavailable_dates,
+      ...dates,
+    ];
+
+    // Atualizando agendamento | usando o PUT para somente subscrever um já existente (ao contrario do POST, que iria criar um novo!)
+    api.put(`/schedules_bycars/${car.id}`, {
+      id: car.id,
+      unavailable_dates
+    })
+    .then(() => navigation.navigate('SchedullingComplete'))
+    .catch(() => Alert.alert('Não foi possível confirmar o agendamento!'))
+
   }
 
   function handleBack(){
@@ -156,8 +176,8 @@ export function SchedullingDetails(){
         <RentalPrice>
           <RentalPriceLabel>TOTAL</RentalPriceLabel>
           <RentalPriceDetails>
-            <RentalPriceQuota>R$ 580 x3 diárias</RentalPriceQuota>
-            <RentalPriceTotal>R$ 2.900</RentalPriceTotal>
+            <RentalPriceQuota>{`R$ ${car.rent.price} x${dates.length} diárias`}</RentalPriceQuota>
+            <RentalPriceTotal>R$ {rentTotal}</RentalPriceTotal>
           </RentalPriceDetails>
         </RentalPrice>
       </Content>
