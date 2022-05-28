@@ -86,6 +86,11 @@ export function SchedullingDetails(){
       ...dates,
     ];
 
+    await api.post(`schedules_byuser`, {
+      user_id: 1,
+      car,
+    });
+
     // Atualizando agendamento | usando o PUT para somente subscrever um já existente (ao contrario do POST, que iria criar um novo!)
     api.put(`/schedules_bycars/${car.id}`, {
       id: car.id,
