@@ -89,6 +89,8 @@ export function SchedullingDetails(){
     await api.post(`schedules_byuser`, {
       user_id: 1,
       car,
+      startDate: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+      endDate: format(getPlatformDate(new Date(dates[dates.length -1])), 'dd/MM/yyyy'),
     });
 
     // Atualizando agendamento | usando o PUT para somente subscrever um já existente (ao contrario do POST, que iria criar um novo!)
