@@ -1,6 +1,14 @@
 import React from 'react';
 import { NavigationProp, ParamListBase, useNavigation, useRoute } from '@react-navigation/native';
 
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
+
 // Tipagem
 import  { CarDTO } from '../../dtos/CarDTO';
 
@@ -22,7 +30,6 @@ import {
   Container,
   Header,
   CarImages,
-  Content,
   Details,
   Description,
   Brand,
@@ -34,6 +41,8 @@ import {
   Accessories,
   Footer
 } from './styles';
+import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { StatusBar } from 'react-native';
 
 
 // Tipando parametros que vem de uma tela para outra
@@ -47,6 +56,22 @@ export function CarDetails(){
   // #Recuperando os parametros que estão sendo passados para essa tela
   const route       = useRoute();
   const { car } = route.params as Params;
+
+  const scrollY = useSharedValue(0);
+  const scrollHandle = useAnimatedScrollHandler(event => {
+    scrollY.value = event.contentOffset.y;
+  });
+
+  const headerStyleAnimation = useAnimatedStyle( () => {
+    return {
+      height: interpolate(
+        scrollY.value,
+        [0, 200],
+        [200, 70],
+        Extrapolate.CLAMP
+      )
+    }
+  })
   
   function handleConfirmRental() {
     navigation.navigate('Schedulling', { car });
@@ -56,19 +81,37 @@ export function CarDetails(){
     navigation.goBack();
   }
 
+  
+
   return (
     <Container>
-      <Header>
-        <BackButton onPress={handleBack} />
-      </Header>
+      <StatusBar 
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <Animated.View
+        style={[headerStyleAnimation]}
+      >
+        <Header>
+          <BackButton onPress={handleBack} />
+        </Header>
 
-      <CarImages>
-        <ImageSlider 
-          imagesUrl={car.photos} 
-        />
-      </CarImages>
+        <CarImages>
+          <ImageSlider 
+            imagesUrl={car.photos} 
+          />
+        </CarImages>
+      </Animated.View>
 
-      <Content>
+      <Animated.ScrollView
+        contentContainerStyle={{ 
+          paddingHorizontal: 24,
+          paddingTop: getStatusBarHeight(),
+        }}
+        showsVerticalScrollIndicator={false}
+        onScroll={scrollHandle}
+      >
         <Details>
           <Description>
             <Brand>{car.brand}</Brand>
@@ -94,7 +137,11 @@ export function CarDetails(){
          </Accessories>
 
         <About>{car.about}</About>
-      </Content>
+        <About>{car.about}</About>
+        <About>{car.about}</About>
+        <About>{car.about}</About>
+        <About>{car.about}</About>
+      </Animated.ScrollView>
 
       <Footer>
         <Button title="Escolher período do aluguel" onPress={handleConfirmRental}/>
