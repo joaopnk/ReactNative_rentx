@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 
 import BrandSvg from '../../assets/brand.svg';
 import LogoSvg from '../../assets/logo.svg';
@@ -7,9 +8,9 @@ import Animated, {
   useSharedValue, 
   useAnimatedStyle,
   withTiming,
-  Easing,
   interpolate,
-  Extrapolate
+  Extrapolate,
+  runOnJS
 } from 'react-native-reanimated';
 
 
@@ -20,6 +21,8 @@ import {
 export function Splash(){
 
   const splashAnimation = useSharedValue(0);
+
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   const brandStyle = useAnimatedStyle( () => {
     return {
@@ -50,11 +53,23 @@ export function Splash(){
     }
   });
 
+
+  // Função que vai levar o usuario para pagina de home após a animação acabar!
+  function startApp(){
+    navigation.navigate('Home');
+  }
+
   useEffect(() => {
     // Colocando para aparecer após 1s
     splashAnimation.value = withTiming(
       50, 
-      { duration: 1000}
+      { duration: 1000},
+      () => {
+        // Redirecionando para rome!
+        'worklet'
+        runOnJS(startApp)();
+        
+      }
     )
   }, []);
   return (
