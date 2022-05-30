@@ -1,7 +1,14 @@
 import React from 'react';
-import { Button, StyleSheet } from 'react-native';
+import { Button, StyleSheet, Dimensions } from 'react-native';
 
-import Animated, { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
+
+const WIDTH = Dimensions.get('window').width;
 
 import {
   Container
@@ -14,13 +21,21 @@ export function Splash(){
   const animatedStyles = useAnimatedStyle(() =>{
     return {
       transform: [
-        { translateX: animation.value}
+        { 
+          translateX: withTiming(animation.value, {
+            // Tempo da animação 
+            duration: 500,
+            // Tipo de animação, ex: linear, etc (EFEITOS)
+            easing: Easing.ease
+
+          })
+        }
       ]
     }
   })
 
   function handleAnimationPosition(){
-    animation.value = Math.random() * 500;
+    animation.value = Math.random() * (WIDTH - 100);
   }
 
   return (
