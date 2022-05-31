@@ -65,7 +65,7 @@ export function Splash(){
       50, 
       { duration: 1000},
       () => {
-        // Redirecionando para rome!
+        // Redirecionando para Home!
         'worklet'
         runOnJS(startApp)();
         
