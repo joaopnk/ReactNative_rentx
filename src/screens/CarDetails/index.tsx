@@ -29,8 +29,8 @@ import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 import {
   Container,
   Header,
-  CarImages,
   Details,
+  CarImages,
   Description,
   Brand,
   Name,
@@ -42,7 +42,8 @@ import {
   Footer
 } from './styles';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
-import { StatusBar } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
+import { useTheme } from 'styled-components';
 
 
 // Tipando parametros que vem de uma tela para outra
@@ -51,6 +52,9 @@ interface Params {
 }
 
 export function CarDetails(){
+  const theme = useTheme();
+
+
   const navigation  = useNavigation<NavigationProp<ParamListBase>>();
   
   // #Recuperando os parametros que estão sendo passados para essa tela
@@ -73,6 +77,17 @@ export function CarDetails(){
     }
   })
   
+  const sliderCarsStyleAnimation = useAnimatedStyle( () => {
+    return {
+      opacity: interpolate(
+        scrollY.value,
+        [0, 150], // Para o carro sumir já quando atingir 150
+        [1, 0],
+        Extrapolate.CLAMP //Garantir que nossas regras sejam respeitadas!
+      )
+    }
+  })
+
   function handleConfirmRental() {
     navigation.navigate('Schedulling', { car });
   }
@@ -91,26 +106,33 @@ export function CarDetails(){
         backgroundColor="transparent"
       />
       <Animated.View
-        style={[headerStyleAnimation]}
+        style={[
+            headerStyleAnimation, 
+            styles.header,
+            {backgroundColor: theme.colors.background_secondary} 
+          ]}
       >
         <Header>
           <BackButton onPress={handleBack} />
         </Header>
 
         <CarImages>
-          <ImageSlider 
-            imagesUrl={car.photos} 
-          />
+          <Animated.View style={sliderCarsStyleAnimation}>
+              <ImageSlider 
+                imagesUrl={car.photos} 
+              />
+          </Animated.View>
         </CarImages>
       </Animated.View>
 
       <Animated.ScrollView
         contentContainerStyle={{ 
           paddingHorizontal: 24,
-          paddingTop: getStatusBarHeight(),
+          paddingTop: getStatusBarHeight() + 160,
         }}
         showsVerticalScrollIndicator={false}
         onScroll={scrollHandle}
+        scrollEventThrottle={16}
       >
         <Details>
           <Description>
@@ -150,3 +172,11 @@ export function CarDetails(){
     </Container>
   );
 }
+
+const styles = StyleSheet.create({
+  header:{
+    position: 'absolute',
+    overflow: 'hidden',
+    zIndex: 1
+  },
+})
