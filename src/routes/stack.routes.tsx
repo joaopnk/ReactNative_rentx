@@ -21,6 +21,10 @@ export function StackRoutes(){
             <Screen 
                 name="Home"
                 component={Home}
+                options={{
+                    // Desabilitando opção do usuario (no caso do IOS) segurar e arrastar pro lado e voltar para tela de SPLASH
+                    gestureEnabled: false
+                }}
             />
             <Screen 
                 name="CarDetails"

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme } from 'styled-components';
 import { ParamListBase, NavigationProp, useNavigation } from '@react-navigation/native';
-import { StatusBar, StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet, BackHandler } from 'react-native';
 
 import { RectButton, PanGestureHandler } from 'react-native-gesture-handler';
 
@@ -98,6 +98,12 @@ export function Home(){
     fetchCar();
   }, []);
 
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      return true;
+    })
+  }, []);
+
   return (
     <Container>
         <StatusBar 
@@ -112,9 +118,13 @@ export function Home(){
               width={RFValue(108)}
               height={RFValue(12)}
             />
-            <TotalCars>
-              Total de {cars.length} carros
-            </TotalCars>
+            {
+              //Quando o load for falso, ai sim mostra o total de carros!
+              !loading &&
+              <TotalCars>
+                Total de {cars.length} carros
+              </TotalCars>
+            }
           </HeaderContent>
         </Header>
         { loading ? <Load /> : 
